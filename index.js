@@ -13,7 +13,7 @@ function request(options) {
 	options.qs = options.qs || null
 	options.form = paramsSerializer(options.form) || null
 
-	if(options.form) {
+	if (options.form) {
 		defaultHeaders['content-type'] = 'text/plain'
 		defaultHeaders['content-length'] = options.form.length
 	}
@@ -25,32 +25,32 @@ function request(options) {
 	var socket = net.connect({
 		host, port
 	}, function () {
-		var requestData = 
-			options.method + ' ' + options.path + (options.qs ? ('?'+paramsSerializer(options.qs)) : '') + ' HTTP/1.1\r\n' +
-	  	'Host: ' + options.host + '\r\n'
+		var requestData =
+			options.method + ' ' + options.path + (options.qs ? ('?' + paramsSerializer(options.qs)) : '') + ' HTTP/1.1\r\n' +
+			'Host: ' + options.host + '\r\n'
 
-	  for(var prop in options.headers) {
-	  	requestData += prop + ': ' + options.headers[prop] + '\r\n'
-	  }
+		for (var prop in options.headers) {
+			requestData += prop + ': ' + options.headers[prop] + '\r\n'
+		}
 
-	  requestData += '\r\n'
+		requestData += '\r\n'
 
-	  if(options.form) {
-	  	requestData += options.form
-	  }
+		if (options.form) {
+			requestData += options.form
+		}
 
-	  socket.end(requestData)
+		socket.end(requestData)
 	})
 
 	return new Promise((resolve, reject) => {
 		var buffers = []
 		socket.on('data', chunk => {
-		  buffers.push(chunk)
+			buffers.push(chunk)
 		})
 		socket.on('end', () => {
 			try {
 				resolve(parseHttp(Buffer.concat(buffers).toString()))
-			} catch(err) {
+			} catch (err) {
 				reject('文档流解析错误')
 			}
 		})
